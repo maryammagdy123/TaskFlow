@@ -1,6 +1,6 @@
 
 
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './App.css'
 import MainLayout from './Components/MainLayout/MainLayout'
 import { createBrowserRouter, RouterProvider } from 'react-router'
@@ -13,9 +13,9 @@ import { RoutingGuard } from './RoutingGuard/RoutigGuard'
 import AuthContextProvider from './Context/AuthContextProvider'
 import TasksContextProvider from './Context/TasksContextProvider'
 
-
+export const queryClient = new QueryClient()
 function App() {
-  // const queryClient = new QueryClient()
+
   let Routes = createBrowserRouter([
     // default
     {
@@ -46,14 +46,14 @@ function App() {
   ])
   return (
     <>
-      <AuthContextProvider>
-        <TasksContextProvider>
-          <RouterProvider router={Routes} />
-        <Toaster />
-        </TasksContextProvider>
-      </AuthContextProvider>
-
-
+      <QueryClientProvider client={queryClient}>
+        <AuthContextProvider>
+          <TasksContextProvider>
+            <RouterProvider router={Routes} />
+            <Toaster />
+          </TasksContextProvider>
+        </AuthContextProvider>
+      </QueryClientProvider>
     </>
   )
 }
