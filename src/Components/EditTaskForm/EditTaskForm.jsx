@@ -3,9 +3,9 @@ import { useForm } from 'react-hook-form'
 import { TaskContext } from '../../Context/TasksContextProvider'
 
 
-export default function EditTaskForm({ setShowModal, handleEditTask, Title, Description }) {
+export default function EditTaskForm({ setShowModal, mutate, Title, Description }) {
 
-	let { register, handleSubmit} = useForm({
+	let { register, handleSubmit } = useForm({
 		defaultValues: {
 			Title: Title,
 			Description: Description
@@ -13,7 +13,7 @@ export default function EditTaskForm({ setShowModal, handleEditTask, Title, Desc
 	})
 
 	return (
-		<form className="space-y-4" onSubmit={handleSubmit(handleEditTask)}>
+		<form className="space-y-4" onSubmit={handleSubmit((values) => mutate(values))}>
 			<div className="flex-1">
 				<input
 					type="text"

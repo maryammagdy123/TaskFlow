@@ -6,10 +6,12 @@ import toast from 'react-hot-toast'
 import { TaskContext } from '../../Context/TasksContextProvider'
 import { useState } from 'react'
 import EditTaskForm from '../EditTaskForm/EditTaskForm'
+import { useMutation } from '@tanstack/react-query'
+import { queryClient } from '../../App'
 
 export default function TasksBtnActions({ id, Done, Title, Description }) {
 	let { token } = useContext(AuthContext)
-	let { getAllTasks } = useContext(TaskContext)
+	// let { getAllTasks } = useContext(TaskContext)
 	const [showModal, setShowModal] = useState(false);
 
 
@@ -31,10 +33,32 @@ export default function TasksBtnActions({ id, Done, Title, Description }) {
 	}
 
 
+	// // finalize task
+	// async function handleFinalizeTask(id) {
+	// 	try {
+	// 		let { data } = await axios.patch(
+	// 			`https://todoapp.cleverapps.io/api/v1/task/finalize-task/${id}`,
+	// 			{},
+	// 			{
+	// 				headers: {
+	// 					Authorization: `Bearer ${token}`
+	// 				}
+	// 			}
+	// 		)
+	// 		if (data?.message === "Ok") {
+	// 			getAllTasks()
+
+	// 		}
+	// 	} catch (err) {
+	// 		toast.error(err.response?.data?.error || "Something went wrong")
+	// 	}
+	// }
+
 	// finalize task
-	async function handleFinalizeTask(id) {
-		try {
-			let { data } = await axios.patch(
+	const { mutate: finalizeTask } = useMutation({
+		mutationKey: ["finalizeTask"],
+		mutationFn: async () => {
+			return await axios.patch(
 				`https://todoapp.cleverapps.io/api/v1/task/finalize-task/${id}`,
 				{},
 				{
@@ -43,35 +67,55 @@ export default function TasksBtnActions({ id, Done, Title, Description }) {
 					}
 				}
 			)
-			if (data?.message === "Ok") {
-				getAllTasks()
-
-			}
-		} catch (err) {
-			toast.error(err.response?.data?.error || "Something went wrong")
+		},
+		onSuccess: (data) => {
+			queryClient.invalidateQueries(["tasks"])
+		},
+		onError: (error) => {
+			toast.error(error.data?.data?.error || "Something went wrong")
 		}
-	}
+	})
 
-	// handleUpdateTask
-	async function handleEditTask(value) {
-		try {
-			let { data } = await axios.put(`https://todoapp.cleverapps.io/api/v1/task/update-task/${id}`, value, {
+	// // handleUpdateTask
+	// async function handleEditTask(value) {
+	// 	try {
+	// 		let { data } = await axios.put(`https://todoapp.cleverapps.io/api/v1/task/update-task/${id}`, value, {
+	// 			headers: {
+	// 				Authorization: `Bearer ${token}`
+	// 			}
+	// 		})
+
+	// 		if (data?.message === "Ok") {
+	// 			toast.success("Task updated!")
+	// 			setShowModal(false)
+	// 			getAllTasks()
+	// 		}
+
+	// 	}
+	// 	catch (err) {
+	// 		toast.error(err.response?.data?.error || "Something went wrong")
+	// 	}
+	// }
+
+	const { mutate: updateTask } = useMutation({
+		mutationKey: ["updateTask"],
+		mutationFn: async (value) => {
+			return axios.put(`https://todoapp.cleverapps.io/api/v1/task/update-task/${id}`, value, {
 				headers: {
 					Authorization: `Bearer ${token}`
 				}
 			})
-
-			if (data?.message === "Ok") {
-				toast.success("Task updated!")
-				setShowModal(false)
-				getAllTasks()
-			}
-
-		}
-		catch (err) {
+		},
+		onSuccess: (data) => {
+			toast.success("Task updated!")
+			setShowModal(false)
+			queryClient.invalidateQueries(["tasks"])
+		},
+		onError: (err) => {
 			toast.error(err.response?.data?.error || "Something went wrong")
 		}
-	}
+	})
+
 
 
 	return (
@@ -91,7 +135,7 @@ export default function TasksBtnActions({ id, Done, Title, Description }) {
 					Delete
 				</button>
 				<button onClick={() => {
-					handleFinalizeTask(id)
+					finalizeTask(id)
 				}} className="px-3 py-1 text-xs font-medium rounded text-green-700 bg-green-100 hover:bg-green-200">
 					{Done ? "undo" : "Mark as complete"}
 				</button>
@@ -106,7 +150,7 @@ export default function TasksBtnActions({ id, Done, Title, Description }) {
 				<div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-xsm flex items-center justify-center w-full h-full">
 					<div className="bg-white dark:bg-gray-900 p-5 rounded-lg w-full max-w-lg mx-auto shadow-lg">
 						<h2 className="text-lg font-semibold mb-4 dark:text-white">Edit Task</h2>
-						<EditTaskForm setShowModal={setShowModal} handleEditTask={handleEditTask} Title={Title} Description={Description} />
+						<EditTaskForm setShowModal={setShowModal} mutate={updateTask} Title={Title} Description={Description} />
 					</div>
 				</div>)}
 		</>
