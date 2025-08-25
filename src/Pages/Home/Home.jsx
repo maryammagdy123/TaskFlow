@@ -1,4 +1,4 @@
-import {  Progress } from 'flowbite-react'
+import { Progress } from 'flowbite-react'
 import AddTaskForm from '../../Components/AddTaskForm/AddTaskForm'
 import { useContext } from 'react'
 import { TaskContext } from '../../Context/TasksContextProvider'

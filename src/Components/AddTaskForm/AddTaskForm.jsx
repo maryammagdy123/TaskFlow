@@ -9,8 +9,11 @@ import { AuthContext } from '../../Context/AuthContextProvider';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
 import { TaskContext } from '../../Context/TasksContextProvider';
+import { useMutation } from '@tanstack/react-query';
+import { queryClient } from '../../App';
 export default function AddTaskForm() {
 	let navg = useNavigate()
+	// form schema
 	let schema = zod.object({
 		Title: zod.string()
 			.nonempty("Task cannot be empty")
@@ -21,43 +24,60 @@ export default function AddTaskForm() {
 			.min(5)
 			.max(200)
 	})
-	let { register, handleSubmit,reset ,formState: { errors } } = useForm({
+	// useForm
+	let { register, handleSubmit, reset, formState: { errors } } = useForm({
 		resolver: zodResolver(schema),
 		mode: "onBlur"
 	})
+	// getting the token
 	let { token } = useContext(AuthContext)
 
-	let { getAllTasks } = useContext(TaskContext)
+	// let { getAllTasks } = useContext(TaskContext)
 	// ADD NEW TASK
 	async function handleAddTask(value) {
-		try {
-			let { data } = await axios.post(`https://todoapp.cleverapps.io/api/v1/task/add-task`, value, {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
+		await axios.post(`https://todoapp.cleverapps.io/api/v1/task/add-task`, value, {
+			headers: {
+				Authorization: `Bearer ${token}`
 			}
-
-			)
-
-			if (data?.message === "Ok") {
-				toast.success("Task added Successfully")
-				reset()
-				navg("/tasks")
-				getAllTasks()
-
-			}
-		} catch (err) {
-			console.log(err);
-
 		}
+
+		)
+
+		// 	if (data?.message === "Ok") {
+		// 		toast.success("Task added Successfully")
+		// 		reset()
+		// 		navg("/tasks")
+		// 		getAllTasks()
+
+		// 	}
+		// } catch (err) {
+		// 	console.log(err);
+
+		// }
 	}
+
+	const { mutate } = useMutation({
+		mutationFn: handleAddTask,
+		onSuccess: (data) => {
+			toast.success("Task added Successfully")
+			reset()
+			navg("/tasks")
+			queryClient.invalidateQueries(["tasks"])
+			console.log(data)
+		},
+		onError: (error) => {
+			console.log(error)
+		}
+
+
+	})
 	return (
 		<div className="bg-white shadow-sm rounded-lg border border-gray-200">
 			<div className="p-6">
 				<h3 className="text-lg font-medium text-gray-900 mb-4">Add New Task</h3>
 
 				{/* form */}
-				<form className="flex flex-col gap-4" onSubmit={handleSubmit(handleAddTask)}>
+				<form className="flex flex-col gap-4" onSubmit={handleSubmit((values) => mutate(values))}>
 					{/* Task field */}
 					<div className="flex-1">
 						<input

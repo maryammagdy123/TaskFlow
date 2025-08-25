@@ -2,16 +2,40 @@ import React, { useContext } from 'react';
 import { TaskContext } from '../../Context/TasksContextProvider';
 import TasksBtnActions from '../../Components/TasksBtnActions/TasksBtnActions';
 import AddTaskForm from '../../Components/AddTaskForm/AddTaskForm';
+import { AuthContext } from '../../Context/AuthContextProvider';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 export default function Tasks() {
-	let { tasks } = useContext(TaskContext);
-	
-	console.log(tasks)
-return (
+	// let { tasks } = useContext(TaskContext);
+	let { token } = useContext(AuthContext)
+
+	// console.log(tasks)
+
+
+	// handeling fetching data(user's tasks ) from api using useQuery
+	async function getAllTasks() {
+		return await axios.get(`https://todoapp.cleverapps.io/api/v1/task/get-all`, {
+			headers: {
+				Authorization: `Bearer ${token}`
+			}
+		})
+	}
+
+	const { data } = useQuery({
+		queryKey: ["tasks"],
+		queryFn: getAllTasks,
+		select: (data) => data?.data?.Dataو
+
+	})
+
+
+
+	return (
 		<div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 			{/* Header */}
 			<div className="mb-8 text-center sm:text-left">
-				{tasks.length === 0 ? (
+				{data.length === 0 ? (
 					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
 						No tasks yet
 					</h1>
@@ -31,11 +55,11 @@ return (
 			</div>
 
 			{/* Tasks List */}
-			{tasks.length > 0 && (
+			{data.length > 0 && (
 				<div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
 					<div className="px-4 py-5 sm:p-6">
 						<div className="space-y-4">
-							{tasks.map((task) => {
+							{data.map((task) => {
 								let { Title, Description, id, Done, createdAt } = task;
 								return (
 									<div
@@ -53,18 +77,16 @@ return (
 
 											{/* Title */}
 											<h3
-												className={`text-base sm:text-lg font-semibold text-gray-900 ${
-													Done ? "line-through" : ""
-												}`}
+												className={`text-base sm:text-lg font-semibold text-gray-900 ${Done ? "line-through" : ""
+													}`}
 											>
 												{Title}
 											</h3>
 
 											{/* Description */}
 											<p
-												className={`text-gray-700 text-sm sm:text-base p-2 sm:p-3 rounded-md bg-white ${
-													Done ? "line-through" : ""
-												}`}
+												className={`text-gray-700 text-sm sm:text-base p-2 sm:p-3 rounded-md bg-white ${Done ? "line-through" : ""
+													}`}
 											>
 												{Description}
 											</p>

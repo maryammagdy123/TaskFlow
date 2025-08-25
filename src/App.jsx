@@ -12,8 +12,8 @@ import { Toaster } from 'react-hot-toast'
 import { RoutingGuard } from './RoutingGuard/RoutigGuard'
 import AuthContextProvider from './Context/AuthContextProvider'
 import TasksContextProvider from './Context/TasksContextProvider'
-
 export const queryClient = new QueryClient()
+
 function App() {
 
   let Routes = createBrowserRouter([
