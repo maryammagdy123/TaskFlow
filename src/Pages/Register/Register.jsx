@@ -63,11 +63,12 @@ export default function Register() {
 	const { mutate } = useMutation({
 		mutationFn: handleAuth,
 		onSuccess: (data) => {
+			console.log(data)
 			toast.success("Account created successfully!");
 			navg("/login")
 		},
-		onError: (error) => {
-			toast.error(error)
+		onError: () => {
+			toast.error("Email is already in use")
 		}
 	})
 
