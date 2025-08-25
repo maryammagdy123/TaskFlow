@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router';
 import { useContext } from 'react';
 import { AuthContext } from '../../Context/AuthContextProvider';
 import { useMutation } from '@tanstack/react-query';
+import { queryClient } from '../../App';
 
 
 export default function Login() {
@@ -55,8 +56,9 @@ export default function Login() {
 			localStorage.setItem("token", data?.data?.token)
 			setToken(data?.data?.token)
 			navg("/")
+			queryClient.invalidateQueries(["tasks"])
 		},
-		onError: (error) => {
+		onError: () => {
 			toast.error("Email or password is incorrect");
 		}
 	})

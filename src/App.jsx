@@ -11,9 +11,9 @@ import Register from './Pages/Register/Register'
 import { Toaster } from 'react-hot-toast'
 import { RoutingGuard } from './RoutingGuard/RoutigGuard'
 import AuthContextProvider from './Context/AuthContextProvider'
-import TasksContextProvider from './Context/TasksContextProvider'
-export const queryClient = new QueryClient()
 
+
+export const queryClient = new QueryClient()
 function App() {
 
   let Routes = createBrowserRouter([
@@ -48,10 +48,10 @@ function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <AuthContextProvider>
-          <TasksContextProvider>
-            <RouterProvider router={Routes} />
-            <Toaster />
-          </TasksContextProvider>
+
+          <RouterProvider router={Routes} />
+          <Toaster />
+
         </AuthContextProvider>
       </QueryClientProvider>
     </>

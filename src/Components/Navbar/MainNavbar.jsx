@@ -34,7 +34,7 @@ export default function MainNavbar() {
 
         {/* Right side (Welcome message + Logout) */}
 
-        {token && <div className="flex md:order-2 items-center space-x-3">
+        {(token && localStorage.getItem("token")) && <div className="flex md:order-2 items-center space-x-3">
 
           <Button
             onClick={handleLogout}

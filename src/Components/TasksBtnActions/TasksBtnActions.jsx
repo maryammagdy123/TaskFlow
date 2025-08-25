@@ -3,7 +3,6 @@ import { useContext } from 'react'
 import { AuthContext } from '../../Context/AuthContextProvider'
 import axios from 'axios'
 import toast from 'react-hot-toast'
-import { TaskContext } from '../../Context/TasksContextProvider'
 import { useState } from 'react'
 import EditTaskForm from '../EditTaskForm/EditTaskForm'
 import { useMutation } from '@tanstack/react-query'
@@ -11,26 +10,10 @@ import { queryClient } from '../../App'
 
 export default function TasksBtnActions({ id, Done, Title, Description }) {
 	let { token } = useContext(AuthContext)
-	// let { getAllTasks } = useContext(TaskContext)
+
 	const [showModal, setShowModal] = useState(false);
 
 
-	// deleteTaskk
-	async function handleDeleteTask(id) {
-		try {
-			let { data } = await axios.delete(`https://todoapp.cleverapps.io/api/v1/task/delete-task/${id}`, {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			})
-			if (data.Data === "Task deleted successfully") {
-				toast.success(data.Data)
-				getAllTasks()
-			}
-		} catch (err) {
-			toast.error(err.data.Data)
-		}
-	}
 
 
 
@@ -72,6 +55,7 @@ export default function TasksBtnActions({ id, Done, Title, Description }) {
 		},
 		onSuccess: (data) => {
 			queryClient.invalidateQueries(["tasks"])
+			console.log(data)
 		},
 		onError: (error) => {
 			toast.error(error.data?.data?.error || "Something went wrong")
@@ -92,6 +76,7 @@ export default function TasksBtnActions({ id, Done, Title, Description }) {
 		onSuccess: (data) => {
 			toast.success("Task updated!")
 			setShowModal(false)
+			console.log(data)
 			queryClient.invalidateQueries(["tasks"])
 		},
 		onError: (err) => {
