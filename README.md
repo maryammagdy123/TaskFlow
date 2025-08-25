@@ -82,14 +82,44 @@ Edit
 3. **React Query**  
    - Fetch tasks with `useQuery`.  
    - Mutations for add/update/delete tasks.  
-   - Auto-refetching ensures UI always shows latest data.  
+   - Auto-refetching ensures UI always shows latest data.
+   - Example:
+    const { data: tasks, isLoading, error } = useTasks(); 
 
 4. **Error & Loading Handling**  
    - Built-in React Query states (`isLoading`, `isError`).  
    - User-friendly messages during API calls.  
 
 5. **Reusable Components**  
-   - Task lists, buttons, and forms are modular and reusable.  
+   - Task lists, buttons, and forms are modular and reusable.
+   - 
+
+
+5. **Custom Hooks**  
+- Example: `useTasks` hook
+  ```js
+  import { useQuery } from '@tanstack/react-query'
+  import axios from 'axios'
+  import { useContext } from 'react'
+  import { AuthContext } from '../Context/AuthContextProvider'
+
+  export default function useTasks() {
+    let { token } = useContext(AuthContext)
+
+    async function getAllTasks() {
+      return await axios.get(`https://todoapp.cleverapps.io/api/v1/task/get-all`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+    }
+
+    return useQuery({
+      queryKey: ["tasks"],
+      queryFn: getAllTasks,
+      select: (data) => data?.data?.Data
+    })
+  }
+This keeps task fetching logic reusable, clean, and separate from UI components.
+
 
 ---
 
@@ -119,11 +149,7 @@ Edit
 http://localhost:5173
 📌 Future Improvements
 Add task categories / tags.
-
 Implement search & filter for tasks.
-
-Dark mode toggle.
-
 Enhance UI with animations (Framer Motion).
 
 👩‍💻 Author
