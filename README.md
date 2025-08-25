@@ -47,7 +47,7 @@ A task management application built with **React** that allows users to sign up,
 - **TanStack Query (React Query)** – data fetching and caching  
 - **Context API** – authentication state management  
 - **Axios** – HTTP requests  
-- **Tailwind CSS / shadcn/ui** – UI styling and responsive design  
+- **Tailwind CSS  – UI styling and responsive design  
 
 ---
 
