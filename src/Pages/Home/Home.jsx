@@ -1,6 +1,3 @@
-import React from 'react'
-import Navbar from '../../Components/Navbar/MainNavbar'
-import MainNavbar from '../../Components/Navbar/MainNavbar'
 import { Button, Progress, Textarea } from 'flowbite-react'
 import AddTaskForm from '../../Components/AddTaskForm/AddTaskForm'
 import { useContext } from 'react'

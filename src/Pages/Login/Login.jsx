@@ -1,23 +1,3 @@
-/**
- * Login Component - Handles user authentication and login functionality
- * 
- * This component provides:
- * 1. User authentication interface with email and password fields
- * 2. Form validation using Zod schema validation
- * 3. API integration for login requests
- * 4. Authentication state management via AuthContext
- * 5. Navigation and user feedback mechanisms
- * 
- * Services Provided:
- * - User authentication service via external API endpoint
- * - Form validation service with custom validation rules
- * - Token management service (storage and context updates)
- * - User navigation service (redirect after successful login)
- * - Toast notification service for user feedback
- * - Session persistence via localStorage
- */
-
-
 import AuthForm from '../../Components/AuthForm/AuthForm';
 import * as zod from "zod";
 import axios from 'axios';
@@ -59,7 +39,7 @@ export default function Login() {
 		}
 	]
 
-	// 
+
 	const handleLogin = async (value) => {
 		return await axios.post(
 			"https://todoapp.cleverapps.io/api/v1/auth/login",
@@ -67,6 +47,7 @@ export default function Login() {
 		);
 	}
 
+	// handling register using useMutation
 	const { mutate } = useMutation({
 		mutationFn: handleLogin,
 		onSuccess: (data) => {
