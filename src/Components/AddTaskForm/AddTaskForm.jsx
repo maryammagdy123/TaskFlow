@@ -13,7 +13,7 @@ import { useMutation } from '@tanstack/react-query';
 import { queryClient } from '../../App';
 export default function AddTaskForm() {
 	let navg = useNavigate()
-	// form schema
+
 	let schema = zod.object({
 		Title: zod.string()
 			.nonempty("Task cannot be empty")
@@ -24,15 +24,15 @@ export default function AddTaskForm() {
 			.min(5)
 			.max(200)
 	})
-	// useForm
+
 	let { register, handleSubmit, reset, formState: { errors } } = useForm({
 		resolver: zodResolver(schema),
 		mode: "onBlur"
 	})
-	// getting the token
+
 	let { token } = useContext(AuthContext)
 
-	// let { getAllTasks } = useContext(TaskContext)
+
 	// ADD NEW TASK
 	async function handleAddTask(value) {
 		await axios.post(`https://todoapp.cleverapps.io/api/v1/task/add-task`, value, {
@@ -40,20 +40,7 @@ export default function AddTaskForm() {
 				Authorization: `Bearer ${token}`
 			}
 		}
-
 		)
-
-		// 	if (data?.message === "Ok") {
-		// 		toast.success("Task added Successfully")
-		// 		reset()
-		// 		navg("/tasks")
-		// 		getAllTasks()
-
-		// 	}
-		// } catch (err) {
-		// 	console.log(err);
-
-		// }
 	}
 
 	const { mutate } = useMutation({
@@ -62,8 +49,9 @@ export default function AddTaskForm() {
 			toast.success("Task added Successfully")
 			reset()
 			navg("/tasks")
-			queryClient.invalidateQueries(["tasks"])
 			console.log(data)
+			queryClient.invalidateQueries(["tasks"])
+
 		},
 		onError: (error) => {
 			console.log(error)
@@ -77,7 +65,7 @@ export default function AddTaskForm() {
 				<h3 className="text-lg font-medium text-gray-900 mb-4">Add New Task</h3>
 
 				{/* form */}
-				<form className="flex flex-col gap-4" onSubmit={handleSubmit((values) => mutate(values))}>
+				<form className="flex flex-col gap-4" onSubmit={handleSubmit((value) => mutate(value))}>
 					{/* Task field */}
 					<div className="flex-1">
 						<input

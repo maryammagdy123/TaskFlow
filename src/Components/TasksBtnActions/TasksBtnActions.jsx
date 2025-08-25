@@ -33,26 +33,28 @@ export default function TasksBtnActions({ id, Done, Title, Description }) {
 	}
 
 
-	// // finalize task
-	// async function handleFinalizeTask(id) {
-	// 	try {
-	// 		let { data } = await axios.patch(
-	// 			`https://todoapp.cleverapps.io/api/v1/task/finalize-task/${id}`,
-	// 			{},
-	// 			{
-	// 				headers: {
-	// 					Authorization: `Bearer ${token}`
-	// 				}
-	// 			}
-	// 		)
-	// 		if (data?.message === "Ok") {
-	// 			getAllTasks()
 
-	// 		}
-	// 	} catch (err) {
-	// 		toast.error(err.response?.data?.error || "Something went wrong")
-	// 	}
-	// }
+	// handle delete task
+	const { mutate: deleteTask } = useMutation({
+		mutationKey: ["finalizeTask"],
+		mutationFn: async (id) => {
+			return await axios.delete(`https://todoapp.cleverapps.io/api/v1/task/delete-task/${id}`, {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			})
+		},
+		onSuccess: (data) => {
+			toast.success(data.data.Data)
+			queryClient.invalidateQueries(["tasks"])
+		},
+		onError: (error) => {
+			toast.error(error.data?.data?.error || "Something went wrong")
+		}
+	})
+
+
+
 
 	// finalize task
 	const { mutate: finalizeTask } = useMutation({
@@ -76,27 +78,8 @@ export default function TasksBtnActions({ id, Done, Title, Description }) {
 		}
 	})
 
-	// // handleUpdateTask
-	// async function handleEditTask(value) {
-	// 	try {
-	// 		let { data } = await axios.put(`https://todoapp.cleverapps.io/api/v1/task/update-task/${id}`, value, {
-	// 			headers: {
-	// 				Authorization: `Bearer ${token}`
-	// 			}
-	// 		})
 
-	// 		if (data?.message === "Ok") {
-	// 			toast.success("Task updated!")
-	// 			setShowModal(false)
-	// 			getAllTasks()
-	// 		}
-
-	// 	}
-	// 	catch (err) {
-	// 		toast.error(err.response?.data?.error || "Something went wrong")
-	// 	}
-	// }
-
+	// handeling updating task
 	const { mutate: updateTask } = useMutation({
 		mutationKey: ["updateTask"],
 		mutationFn: async (value) => {
@@ -130,7 +113,7 @@ export default function TasksBtnActions({ id, Done, Title, Description }) {
 					Edit
 				</button>
 				<button onClick={() => {
-					handleDeleteTask(id)
+					deleteTask(id)
 				}} className="px-3 py-1 text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200">
 					Delete
 				</button>
