@@ -25,6 +25,7 @@ import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router';
 import { useContext } from 'react';
 import { AuthContext } from '../../Context/AuthContextProvider';
+import { useMutation } from '@tanstack/react-query';
 
 
 export default function Login() {
@@ -59,30 +60,25 @@ export default function Login() {
 	]
 
 	// 
-	const handleAuth = async (value) => {
-
-		try {
-			const { data } = await axios.post(
-				"https://todoapp.cleverapps.io/api/v1/auth/login",
-				value
-			);
-			if (data?.message === "Ok") {
-				console.log(data)
-				toast.success("Logged in successfully!");
-				localStorage.setItem("token", data?.token)
-				setToken(data?.token)
-				navg("/")
-
-			}
-		} catch (error) {
-
-			toast.error("Email or password is incorrect");
-
-		}
-
-
-
+	const handleLogin = async (value) => {
+		return await axios.post(
+			"https://todoapp.cleverapps.io/api/v1/auth/login",
+			value
+		);
 	}
+
+	const { mutate } = useMutation({
+		mutationFn: handleLogin,
+		onSuccess: (data) => {
+			toast.success("Logged in successfully!");
+			localStorage.setItem("token", data?.data?.token)
+			setToken(data?.data?.token)
+			navg("/")
+		},
+		onError: (error) => {
+			toast.error("Email or password is incorrect");
+		}
+	})
 
 
 	return (
@@ -99,7 +95,7 @@ export default function Login() {
 
 				<div className="bg-white py-8 px-6 shadow-lg rounded-lg sm:px-10">
 					{/* log in form */}
-					<AuthForm inputs={LogInFormInputs} schema={schema} handleAuth={handleAuth} />
+					<AuthForm inputs={LogInFormInputs} schema={schema} mutate={mutate} />
 
 					<div className="mt-6 text-center">
 						<p className="text-sm text-gray-600">

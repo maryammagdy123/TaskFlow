@@ -3,7 +3,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form';
 import { useLocation } from 'react-router';
 import { zodResolver } from "@hookform/resolvers/zod"
-export default function AuthForm({ inputs, schema, handleAuth }) {
+export default function AuthForm({ inputs, schema, mutate }) {
 	let location = useLocation();
 	let isLoginPage = location.pathname === "/login";
 	const { register, handleSubmit, formState: { errors } } = useForm({
@@ -12,7 +12,7 @@ export default function AuthForm({ inputs, schema, handleAuth }) {
 	});
 	return (
 		<>
-			<form className="space-y-6" onSubmit={handleSubmit(handleAuth)} >
+			<form className="space-y-6" onSubmit={handleSubmit(mutate)} >
 
 				{
 					inputs.map((input, index) => {

@@ -4,6 +4,7 @@ import axios from 'axios';
 import * as zod from "zod";
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router';
+import { useMutation } from '@tanstack/react-query';
 export default function Register() {
 	const schema = zod.object({
 		name: zod.string()
@@ -50,27 +51,25 @@ export default function Register() {
 
 
 	const handleAuth = async (value) => {
-
-		try {
-			const { data } = await axios.post(
-				"https://todoapp.cleverapps.io/api/v1/auth/register",
-				{
-					...value
-				}
-			);
-			if (data?.message === "Created") {
-				toast.success("Account created successfully!");
-				navg("/login")
+		return await axios.post(
+			"https://todoapp.cleverapps.io/api/v1/auth/register",
+			{
+				...value
 			}
-
-
-		} catch (err) {
-
-			toast.error("Emial is already in use");
-		}
-
-
+		);
 	}
+
+
+	const { mutate } = useMutation({
+		mutationFn: handleAuth,
+		onSuccess: (data) => {
+			toast.success("Account created successfully!");
+			navg("/login")
+		},
+		onError: (error) => {
+			toast.error(error)
+		}
+	})
 
 
 	return (
@@ -88,7 +87,7 @@ export default function Register() {
 				<div className="bg-white py-8 px-6 shadow-lg rounded-lg sm:px-10">
 
 					{/* register form */}
-					<AuthForm inputs={registerFormInputs} schema={schema} handleAuth={handleAuth} />
+					<AuthForm inputs={registerFormInputs} schema={schema} mutate={mutate} />
 
 					<div className="mt-6 text-center">
 						<p className="text-sm text-gray-600">
@@ -107,5 +106,8 @@ export default function Register() {
 			</div>
 		</div>
 	);
+
 }
+
+
 
